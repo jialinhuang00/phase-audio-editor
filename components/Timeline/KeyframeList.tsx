@@ -10,7 +10,7 @@ export const KeyframeList = () => {
   const listRef = useRef<HTMLDivElement>(null);
   const scrollX = useScrollX(listRef);
   const scrollY = useScrollY(listRef);
-  const { tracks, duration, selectTrack } = useSnapshot(audioStore);
+  const { tracks, duration } = useSnapshot(audioStore);
 
   useEffect(() => {
     if (listRef.current) {

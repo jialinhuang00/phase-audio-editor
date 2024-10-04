@@ -3,14 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #222222;
+  --hover: #2c4692;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #222222;
+    --foreground: #dddddd;
+    --hover: #82acf8;
   }
 }
 
@@ -22,7 +24,17 @@ body {
 }
 
 * {
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+}
+
+a:visited,
+a {
+  color: var(--foreground);
+}
+
+a:hover,
+a:active {
+  color: var(--hover);
 }
 
 @layer utilities {

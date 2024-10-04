@@ -26,13 +26,13 @@ const isValidNumber = (value: string): boolean => {
 export const PlayControls = () => {
   const { duration, time } = useSnapshot(audioStore);
 
-  const setTime = (time: number) => {
+  const setTime = useCallback((time: number) => {
     audioStore.time = time;
-  };
+  }, []);
 
-  const setDuration = (duration: number) => {
+  const setDuration = useCallback((duration: number) => {
     audioStore.duration = duration;
-  };
+  }, []);
 
   const [temporaryTime, setTemporaryTime] = useState(time.toString());
   const [temporaryDuration, setTemporaryDuration] = useState(
@@ -96,7 +96,11 @@ export const PlayControls = () => {
       if (!isCancelling.current) {
         let newValue = roundToNearestTen(Number(temporaryValue));
         if (isDuration) {
-          newValue = Math.min(DURATION_MAX_VALUE, newValue);
+          newValue = Math.max(
+            DURATION_MIN_VALUE,
+            Math.min(DURATION_MAX_VALUE, newValue)
+          );
+
           setTemporaryDuration(newValue.toString());
           setDuration(newValue);
           // if new duration < time，adjust time
@@ -124,6 +128,22 @@ export const PlayControls = () => {
       e.target.select();
     },
     []
+  );
+
+  const cancel = useCallback(
+    (isDuration: boolean) => {
+      isCancelling.current = true;
+      if (isDuration) {
+        setTemporaryDuration(focusDurationValue.current);
+        setDuration(Number(focusDurationValue.current));
+        durationRef.current?.blur();
+      } else {
+        setTemporaryTime(focusTimeValue.current);
+        setTime(Number(focusTimeValue.current));
+        timeRef.current?.blur();
+      }
+    },
+    [setTime, setDuration]
   );
 
   const handleKeyDown = useCallback(
@@ -158,23 +178,7 @@ export const PlayControls = () => {
 
       e.preventDefault();
     },
-    [temporaryTime, temporaryDuration, setTime, setDuration]
-  );
-
-  const cancel = useCallback(
-    (isDuration: boolean) => {
-      isCancelling.current = true;
-      if (isDuration) {
-        setTemporaryDuration(focusDurationValue.current);
-        setDuration(Number(focusDurationValue.current));
-        durationRef.current?.blur();
-      } else {
-        setTemporaryTime(focusTimeValue.current);
-        setTime(Number(focusTimeValue.current));
-        timeRef.current?.blur();
-      }
-    },
-    [setTime]
+    [temporaryTime, temporaryDuration, setTime, setDuration, cancel]
   );
 
   // arrow keyboard for time
@@ -203,7 +207,7 @@ export const PlayControls = () => {
 
   return (
     <div
-      className="flex items-center text-white justify-between border-b border-r border-solid border-gray-700 px-2 text-xs"
+      className="flex flex-wrap items-center text-white justify-between border-b border-r border-solid border-gray-700 px-2 text-xs"
       data-testid="play-controls"
     >
       <fieldset className="flex gap-1">

@@ -8,7 +8,7 @@ import { PlayControls } from "@/components/Timeline/PlayControls";
 export const Timeline = () => {
   return (
     <div
-      className="relative h-[360px] w-full grid grid-cols-[300px_calc(100vw-300px)] grid-rows-[40px_1fr] 
+      className="relative h-[300px] w-full grid grid-cols-[minmax(150px,_300px)_minmax(600px,_1fr)] grid-rows-[40px_1fr] 
     bg-[#222222] border-t-2 border-solid border-gray-700 overflow-hidden"
       data-testid="timeline"
     >

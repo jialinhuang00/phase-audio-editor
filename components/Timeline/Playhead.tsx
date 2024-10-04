@@ -9,10 +9,10 @@ export const Playhead = () => {
   const { scrollX, duration, time } = useSnapshot(audioStore);
   const lastUpdateRef = useRef(0);
 
-  const updatingPosition = (newValue: number) => {
+  const updatingPosition = useCallback((newValue: number) => {
     const clampedTime = Math.min(Math.max(newValue, 0), duration);
     audioStore.time = clampedTime;
-  };
+  }, []);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -20,9 +20,9 @@ export const Playhead = () => {
     e.preventDefault();
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -41,7 +41,7 @@ export const Playhead = () => {
         }
       }
     },
-    [isDragging, duration, scrollX]
+    [isDragging, duration, scrollX, updatingPosition]
   );
 
   useEffect(() => {
