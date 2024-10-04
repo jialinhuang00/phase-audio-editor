@@ -83,14 +83,12 @@ export const PlayControls = ({
       setTemporary(numericValue.toString());
       // native input up-down button, directly update time
       if (Math.abs(numericValue - Number(lastValue.current)) === STEP) {
-        console.log("click");
         setSure(Math.round(numericValue));
         e.target.select();
       }
       lastValue.current = newValue.toString();
     } else {
       // back to origin
-      console.log("back to origin");
       setTemporary(lastValue.current);
     }
   };
@@ -157,7 +155,6 @@ export const PlayControls = ({
           setSure(newValue);
           shouldSelectAllRef.current = true;
         } else if (e.key === "Enter") {
-          console.log(inputRef);
           inputRef.current?.blur();
         } else if (e.key === "Escape") {
           cancel();
@@ -187,6 +184,14 @@ export const PlayControls = ({
       shouldSelectAllTimeRef.current = false;
     }
   }, [temporaryTime]);
+
+  // click ruler
+  useEffect(() => {
+    if (time !== Number(temporaryTime)) {
+      setTemporaryTime(time.toString());
+      setTime(time);
+    }
+  }, [time]);
 
   // duration
   useEffect(() => {
