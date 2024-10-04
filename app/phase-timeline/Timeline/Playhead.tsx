@@ -1,5 +1,5 @@
 "use client";
-import { scrollStore } from "@/app/stores/scrollStore";
+import { audioStore, roundToNearestTen } from "@/stores/audioStore";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
 
@@ -12,7 +12,7 @@ export const Playhead: React.FC<
   PlayheadProps & { onDrag: (time: number) => void }
 > = ({ time, duration, onDrag }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const { scrollX } = useSnapshot(scrollStore);
+  const { scrollX } = useSnapshot(audioStore);
   const lastUpdateRef = useRef(0);
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -31,7 +31,7 @@ export const Playhead: React.FC<
         // lower frequency test
         if (now - lastUpdateRef.current > 16) {
           const newPosition = Math.max(0, Math.min(e.clientX, duration + 316));
-          onDrag(newPosition - 316);
+          onDrag(roundToNearestTen(newPosition - 316));
           lastUpdateRef.current = now;
         }
       }
@@ -60,6 +60,8 @@ export const Playhead: React.FC<
         visibility: translatedTime < -16 ? "hidden" : "visible",
       }}
       onMouseDown={handleMouseDown}
+      // onMouseUp={handleMouseUp}
+      // onMouseMove={handleMouseMove}
     >
       <div className="absolute border-solid border-[5px] border-transparent border-t-yellow-600 -translate-x-1.5" />
     </div>

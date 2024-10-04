@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
-import { scrollStore } from "@/app/stores/scrollStore";
+import { audioStore } from "@/stores/audioStore";
 
-export const useScrollY = (ref: React.RefObject<HTMLDivElement>) => {
-  const snap = useSnapshot(scrollStore);
+export const useScrollX = (ref: React.RefObject<HTMLDivElement>) => {
+  const snap = useSnapshot(audioStore);
 
   useEffect(() => {
     const handleScroll = () => {
       if (ref.current) {
-        scrollStore.scrollY = ref.current.scrollTop;
+        audioStore.scrollX = ref.current.scrollLeft;
       }
     };
 
@@ -24,5 +24,5 @@ export const useScrollY = (ref: React.RefObject<HTMLDivElement>) => {
     };
   }, [ref]);
 
-  return snap.scrollY;
+  return snap.scrollX;
 };

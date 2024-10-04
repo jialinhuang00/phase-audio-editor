@@ -1,4 +1,5 @@
 "use client";
+import { roundToNearestTen } from "@/stores/audioStore";
 import React, {
   Dispatch,
   SetStateAction,
@@ -45,11 +46,11 @@ export const PlayControls = ({
     duration.toString()
   );
 
+  const isCancelling = useRef(false);
   // time
   const timeRef = useRef<HTMLInputElement>(null);
   const lastTimeValue = useRef(time.toString());
   const focusTimeValue = useRef(time.toString());
-  const isCancelling = useRef(false);
   const shouldSelectAllTimeRef = useRef(false);
 
   // duration
@@ -100,7 +101,7 @@ export const PlayControls = ({
       const otherSetter = isDuration ? setTime : setDuration;
 
       if (!isCancelling.current) {
-        let newValue = Number(temporaryValue);
+        let newValue = roundToNearestTen(Number(temporaryValue));
         if (isDuration) {
           newValue = Math.min(DURATION_MAX_VALUE, newValue);
           setTemporaryDuration(newValue.toString());
@@ -157,7 +158,7 @@ export const PlayControls = ({
         } else if (e.key === "Enter") {
           inputRef.current?.blur();
         } else if (e.key === "Escape") {
-          cancel();
+          cancel(isDuration);
         }
         return;
       }
@@ -167,17 +168,23 @@ export const PlayControls = ({
     [temporaryTime, temporaryDuration, setTime, setDuration]
   );
 
-  const cancel = useCallback(() => {
-    isCancelling.current = true;
-    setTemporaryTime(focusTimeValue.current);
-    setTime(Number(focusTimeValue.current));
-    setTemporaryDuration(focusDurationValue.current);
-    setTime(Number(focusDurationValue.current));
-    timeRef.current?.blur();
-    durationRef.current?.blur();
-  }, [setTime]);
+  const cancel = useCallback(
+    (isDuration: boolean) => {
+      isCancelling.current = true;
+      if (isDuration) {
+        setTemporaryDuration(focusDurationValue.current);
+        setDuration(Number(focusDurationValue.current));
+        durationRef.current?.blur();
+      } else {
+        setTemporaryTime(focusTimeValue.current);
+        setTime(Number(focusTimeValue.current));
+        timeRef.current?.blur();
+      }
+    },
+    [setTime]
+  );
 
-  // time
+  // arrow keyboard for time
   useEffect(() => {
     if (shouldSelectAllTimeRef.current && timeRef.current) {
       timeRef.current.select();
@@ -185,7 +192,7 @@ export const PlayControls = ({
     }
   }, [temporaryTime]);
 
-  // click ruler
+  // after clicking ruler
   useEffect(() => {
     if (time !== Number(temporaryTime)) {
       setTemporaryTime(time.toString());
@@ -193,7 +200,7 @@ export const PlayControls = ({
     }
   }, [time]);
 
-  // duration
+  // arrow keyboard for duration
   useEffect(() => {
     if (shouldSelectAllDurationRef.current && durationRef.current) {
       durationRef.current.select();
@@ -203,7 +210,7 @@ export const PlayControls = ({
 
   return (
     <div
-      className="flex items-center text-white justify-between border-b border-r border-solid border-gray-700 px-2"
+      className="flex items-center text-white justify-between border-b border-r border-solid border-gray-700 px-2 text-xs"
       data-testid="play-controls"
     >
       <fieldset className="flex gap-1">

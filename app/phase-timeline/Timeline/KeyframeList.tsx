@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { Segment } from "./Segment";
-import { useScrollX } from "@/app/hooks/useScrollX";
-import { useScrollY } from "@/app/hooks/useScrollY";
+import { Segment } from "@/app/phase-timeline/Timeline/Segment";
+import { useScrollX } from "@/hooks/useScrollX";
+import { useScrollY } from "@/hooks/useScrollY";
 
 type KeyframeListProps = {
   duration: number;

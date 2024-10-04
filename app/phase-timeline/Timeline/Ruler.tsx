@@ -1,6 +1,7 @@
 "use client";
 
-import { useScrollX } from "@/app/hooks/useScrollX";
+import { useScrollX } from "@/hooks/useScrollX";
+import { roundToNearestTen } from "@/stores/audioStore";
 import { useRef, useCallback, useEffect } from "react";
 
 type RulerProps = {
@@ -22,7 +23,7 @@ export const Ruler: React.FC<RulerProps> = ({ duration, onTimeUpdate }) => {
         const clickPosition =
           event.clientX - rect.left + scrollLeft - PADDING_X;
         const newTime = Math.min(Math.max(clickPosition, 0), duration);
-        onTimeUpdate(newTime);
+        onTimeUpdate(roundToNearestTen(newTime));
       }
     },
     [duration, onTimeUpdate]

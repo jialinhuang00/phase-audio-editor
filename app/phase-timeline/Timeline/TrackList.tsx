@@ -1,5 +1,5 @@
 "use client";
-import { useScrollY } from "@/app/hooks/useScrollY";
+import { useScrollY } from "@/hooks/useScrollY";
 import { useEffect, useRef } from "react";
 
 export const TrackList = () => {
