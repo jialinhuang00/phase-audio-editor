@@ -1,6 +1,6 @@
 "use client";
 import { scrollStore } from "@/app/stores/scrollStore";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
 
 type PlayheadProps = {
@@ -13,8 +13,11 @@ export const Playhead: React.FC<
 > = ({ time, duration, onDrag }) => {
   const [isDragging, setIsDragging] = useState(false);
   const { scrollX } = useSnapshot(scrollStore);
-  const handleMouseDown = () => {
+  const lastUpdateRef = useRef(0);
+  const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
+    // prevent selecting text LOL
+    e.preventDefault();
   };
 
   const handleMouseUp = () => {
@@ -22,14 +25,15 @@ export const Playhead: React.FC<
   };
 
   const handleMouseMove = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
+    (e: MouseEvent) => {
       if (isDragging) {
-        const rect = event.currentTarget.getBoundingClientRect();
-        const newTime = Math.min(
-          Math.max(event.clientX - rect.left, 0),
-          duration
-        );
-        onDrag(newTime);
+        const now = Date.now();
+        // lower frequency test
+        if (now - lastUpdateRef.current > 16) {
+          const newPosition = Math.max(0, Math.min(e.clientX, duration + 316));
+          onDrag(newPosition - 316);
+          lastUpdateRef.current = now;
+        }
       }
     },
     [isDragging, duration, onDrag]
@@ -38,23 +42,24 @@ export const Playhead: React.FC<
   useEffect(() => {
     if (isDragging) {
       document.addEventListener("mouseup", handleMouseUp);
-      return () => {
-        document.removeEventListener("mouseup", handleMouseUp);
-      };
+      document.addEventListener("mousemove", handleMouseMove);
     }
-  }, [isDragging]);
-
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, [isDragging, handleMouseUp, handleMouseMove]);
   const translatedTime = time - scrollX;
   return (
     <div
       className="absolute left-[316px] h-full border-l-2 border-solid border-yellow-600 z-10"
       data-testid="playhead"
       style={{
+        cursor: "ew-resize",
         transform: `translateX(calc(${translatedTime}px - 50%))`,
         visibility: translatedTime < -16 ? "hidden" : "visible",
       }}
       onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
     >
       <div className="absolute border-solid border-[5px] border-transparent border-t-yellow-600 -translate-x-1.5" />
     </div>
