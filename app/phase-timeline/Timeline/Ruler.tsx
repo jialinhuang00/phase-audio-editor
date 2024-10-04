@@ -1,6 +1,8 @@
-export const Ruler = () => {
-  // TODO: implement mousedown and mousemove to update time and Playhead position
+type RulerProps = {
+  duration: number;
+};
 
+export const Ruler = ({ duration }: RulerProps) => {
   return (
     <div
       className="px-4 py-2 min-w-0 
@@ -8,7 +10,11 @@ export const Ruler = () => {
       overflow-x-auto overflow-y-hidden"
       data-testid="ruler"
     >
-      <div className="w-[2000px] h-6 rounded-md bg-white/25" data-testid="ruler-bar"></div>
+      <div
+        className="h-6 rounded-md bg-white/25"
+        data-testid="ruler-bar"
+        style={{ width: `${duration}px` }}
+      ></div>
     </div>
   );
 };

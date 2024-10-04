@@ -83,6 +83,7 @@ export const PlayControls = ({
       setTemporary(numericValue.toString());
       // native input up-down button, directly update time
       if (Math.abs(numericValue - Number(lastValue.current)) === STEP) {
+        console.log("click");
         setSure(Math.round(numericValue));
         e.target.select();
       }
@@ -98,15 +99,30 @@ export const PlayControls = ({
     (e: React.FocusEvent<HTMLInputElement>, isDuration: boolean) => {
       const lastValue = isDuration ? lastDurationValue : lastTimeValue;
       const temporaryValue = isDuration ? temporaryDuration : temporaryTime;
-      const setSure = isDuration ? setDuration : setTime;
+      const otherSetter = isDuration ? setTime : setDuration;
+
       if (!isCancelling.current) {
-        const newValue = Number(temporaryValue);
-        setSure(newValue);
+        let newValue = Number(temporaryValue);
+        if (isDuration) {
+          newValue = Math.min(DURATION_MAX_VALUE, newValue);
+          setTemporaryDuration(newValue.toString());
+          setDuration(newValue);
+          // if new duration < time，adjust time
+          if (newValue < time) {
+            otherSetter(newValue);
+            setTemporaryTime(newValue.toString());
+          }
+        } else {
+          // 確保 time 不超過 duration
+          newValue = Math.min(newValue, duration);
+          setTemporaryTime(newValue.toString());
+          setTime(newValue);
+        }
         lastValue.current = newValue.toString();
       }
       isCancelling.current = false;
     },
-    [temporaryTime, setTime, temporaryDuration, setDuration]
+    [temporaryTime, setTime, temporaryDuration, setDuration, time, duration]
   );
 
   const handleFocus = useCallback(
