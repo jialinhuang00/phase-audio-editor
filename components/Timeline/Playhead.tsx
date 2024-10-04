@@ -3,17 +3,17 @@ import { audioStore, roundToNearestTen } from "@/stores/audioStore";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
 
-type PlayheadProps = {
-  time: number;
-  duration: number;
-};
-
-export const Playhead: React.FC<
-  PlayheadProps & { onDrag: (time: number) => void }
-> = ({ time, duration, onDrag }) => {
+const LEFT_OFFSET = 316;
+export const Playhead = () => {
   const [isDragging, setIsDragging] = useState(false);
-  const { scrollX } = useSnapshot(audioStore);
+  const { scrollX, duration, time } = useSnapshot(audioStore);
   const lastUpdateRef = useRef(0);
+
+  const updatingPosition = (newValue: number) => {
+    const clampedTime = Math.min(Math.max(newValue, 0), duration);
+    audioStore.time = clampedTime;
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     // prevent selecting text LOL
@@ -28,15 +28,20 @@ export const Playhead: React.FC<
     (e: MouseEvent) => {
       if (isDragging) {
         const now = Date.now();
-        // lower frequency test
+
+        // 16 means 60fps
         if (now - lastUpdateRef.current > 16) {
-          const newPosition = Math.max(0, Math.min(e.clientX, duration + 316));
-          onDrag(roundToNearestTen(newPosition - 316));
+          const mouseX = e.clientX + scrollX; // Add scrollX to account for horizontal scroll
+          const newPosition = Math.max(
+            LEFT_OFFSET,
+            Math.min(mouseX, LEFT_OFFSET + duration)
+          );
+          updatingPosition(roundToNearestTen(newPosition - LEFT_OFFSET));
           lastUpdateRef.current = now;
         }
       }
     },
-    [isDragging, duration, onDrag]
+    [isDragging, duration, scrollX]
   );
 
   useEffect(() => {
@@ -52,9 +57,10 @@ export const Playhead: React.FC<
   const translatedTime = time - scrollX;
   return (
     <div
-      className="absolute left-[316px] h-full border-l-2 border-solid border-yellow-600 z-10"
+      className="absolute  h-full border-l-2 border-solid border-yellow-600 z-10"
       data-testid="playhead"
       style={{
+        left: `${LEFT_OFFSET}px`,
         cursor: "ew-resize",
         transform: `translateX(calc(${translatedTime}px - 50%))`,
         visibility: translatedTime < -16 ? "hidden" : "visible",

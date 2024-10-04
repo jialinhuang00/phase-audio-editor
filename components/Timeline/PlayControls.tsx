@@ -1,20 +1,8 @@
 "use client";
-import { roundToNearestTen } from "@/stores/audioStore";
-import React, {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { audioStore, roundToNearestTen } from "@/stores/audioStore";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSnapshot } from "valtio";
 
-type PlayControlsProps = {
-  time: number;
-  setTime: Dispatch<SetStateAction<number>>;
-  duration: number;
-  setDuration: Dispatch<SetStateAction<number>>;
-};
 const STEP = 10;
 const MIN_VALUE = 0;
 const DURATION_MIN_VALUE = 100;
@@ -35,12 +23,17 @@ const isValidNumber = (value: string): boolean => {
   return !isNaN(num) && num >= MIN_VALUE;
 };
 
-export const PlayControls = ({
-  time,
-  setTime,
-  duration,
-  setDuration,
-}: PlayControlsProps) => {
+export const PlayControls = () => {
+  const { duration, time } = useSnapshot(audioStore);
+
+  const setTime = (time: number) => {
+    audioStore.time = time;
+  };
+
+  const setDuration = (duration: number) => {
+    audioStore.duration = duration;
+  };
+
   const [temporaryTime, setTemporaryTime] = useState(time.toString());
   const [temporaryDuration, setTemporaryDuration] = useState(
     duration.toString()

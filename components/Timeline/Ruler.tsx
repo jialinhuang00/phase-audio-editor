@@ -1,18 +1,15 @@
 "use client";
 
 import { useScrollX } from "@/hooks/useScrollX";
-import { roundToNearestTen } from "@/stores/audioStore";
+import { audioStore, roundToNearestTen } from "@/stores/audioStore";
 import { useRef, useCallback, useEffect } from "react";
-
-type RulerProps = {
-  duration: number;
-  onTimeUpdate: (time: number) => void;
-};
+import { useSnapshot } from "valtio";
 
 const PADDING_X = 16;
-export const Ruler: React.FC<RulerProps> = ({ duration, onTimeUpdate }) => {
+export const Ruler = () => {
   const rulerRef = useRef<HTMLDivElement>(null);
   const scrollX = useScrollX(rulerRef);
+  const { duration, positions } = useSnapshot(audioStore);
 
   const handleRulerClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -23,10 +20,10 @@ export const Ruler: React.FC<RulerProps> = ({ duration, onTimeUpdate }) => {
         const clickPosition =
           event.clientX - rect.left + scrollLeft - PADDING_X;
         const newTime = Math.min(Math.max(clickPosition, 0), duration);
-        onTimeUpdate(roundToNearestTen(newTime));
+        audioStore.time = roundToNearestTen(newTime);
       }
     },
-    [duration, onTimeUpdate]
+    [duration]
   );
 
   useEffect(() => {
@@ -38,8 +35,8 @@ export const Ruler: React.FC<RulerProps> = ({ duration, onTimeUpdate }) => {
   return (
     <div
       ref={rulerRef}
-      className="overflow-auto relative py-2 min-w-0 border-b border-solid border-gray-700 overflow-x-auto overflow-y-hidden"
-      style={{ padding: `0 ${PADDING_X}px` }}
+      className="cursor-pointer overflow-auto relative py-2 min-w-0 border-b border-solid border-gray-700 overflow-x-auto overflow-y-hidden"
+      style={{ paddingLeft: PADDING_X, paddingRight: PADDING_X }}
       data-testid="ruler"
     >
       <div
@@ -47,7 +44,23 @@ export const Ruler: React.FC<RulerProps> = ({ duration, onTimeUpdate }) => {
         className="h-6 rounded-md bg-white/25"
         data-testid="ruler-bar"
         style={{ width: `${duration}px` }}
-      ></div>
+      >
+        {positions.map((left, index) => {
+          const isFiveMultiple = index % 5 === 0;
+          return index === 0 ? null : (
+            <div
+              key={left}
+              className="absolute text-center ml-[-0.5px] text-[7px] text-[#fafafa] w-[1px] h-full"
+              style={{
+                left: `${left}px`,
+                width: 30,
+              }}
+            >
+              {isFiveMultiple && left}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

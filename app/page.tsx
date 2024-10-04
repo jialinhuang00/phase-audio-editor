@@ -1,5 +1,12 @@
-import Image from "next/image";
+import { Readme } from "@/components/Readme";
+import { Timeline } from "@/components/Timeline";
+import React from "react";
 
 export default function Home() {
-  return <div>root</div>;
+  return (
+    <>
+      <Timeline />
+      <Readme />
+    </>
+  );
 }
