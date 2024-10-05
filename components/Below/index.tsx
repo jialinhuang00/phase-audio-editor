@@ -4,7 +4,7 @@ import { PhaseReadmeChecklist } from "@/components/Below/PhaseChecklist";
 import { Readme } from "@/components/Below/Readme";
 
 export default function Below() {
-  const [showChecklist, setShowChecklist] = useState(true);
+  const [showChecklist, setShowChecklist] = useState(false);
 
   return (
     <div

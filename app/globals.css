@@ -3,16 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --background: #fafafa;
-  --foreground: #222222;
-  --hover: #2c4692;
+  --background: #222222;
+  --foreground: #dddddd;
+  --hover: #82acf8;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #222222;
-    --foreground: #dddddd;
-    --hover: #82acf8;
+ {
+   {
+    /* @media (prefers-color-scheme: dark) {
+ 
+} */
   }
 }
 

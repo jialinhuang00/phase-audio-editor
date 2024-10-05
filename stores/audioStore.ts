@@ -3,10 +3,10 @@ import { proxy } from "valtio";
 export const audioStore = proxy({
   scrollX: 0,
   scrollY: 0,
-  time: 0,
+  time: 400,
   duration: 1700,
   selectTrack: "",
-  tracks: Array.from({ length: 20 }, (_, index) =>
+  tracks: Array.from({ length: 15 }, (_, index) =>
     String.fromCharCode(65 + index)
   ),
   get positions() {

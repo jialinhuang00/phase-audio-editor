@@ -7,7 +7,10 @@ export const Readme = () => (
       <h2 className="text-xl text-[#f48f27] font-semibold mb-2">
         Package Added (commit: 53373c)
       </h2>
-      <a href="https://www.npmjs.com/package/phase-readme">
+      <a
+        href="https://github.com/phase-software/timeline-challenge"
+        target="_blank"
+      >
         https://github.com/phase-software/timeline-challenge
       </a>
       <h2 className="text-xl text-[#17b3fb] mt-8 font-semibold mb-2">
@@ -31,7 +34,9 @@ export const Readme = () => (
       <h2 className="text-xl text-[#fc44b2] mt-8 font-semibold mb-2">
         My webiste
       </h2>
-      <a href="https://jialin00.com">jialin00.com</a>
+      <a target="_blank" href="https://jialin00.com">
+        jialin00.com
+      </a>
     </div>
   </>
 );

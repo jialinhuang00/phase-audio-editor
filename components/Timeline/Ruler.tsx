@@ -47,16 +47,17 @@ export const Ruler = () => {
       >
         {positions.map((left, index) => {
           const isFiveMultiple = index % 5 === 0;
-          return index === 0 ? null : (
+          return !isFiveMultiple ? null : (
             <div
               key={left}
-              className="absolute text-center ml-[-0.5px] text-[7px] text-[#fafafa] w-[1px] h-full"
+              className="absolute flex flex-col justify-between text-center ml-[-0.5px] text-[7px] text-[#fafafa] w-[1px]"
               style={{
                 left: `${left}px`,
                 width: 30,
               }}
             >
-              {isFiveMultiple && left}
+              <p> {left}</p>
+              <p> |</p>
             </div>
           );
         })}

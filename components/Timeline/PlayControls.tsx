@@ -109,7 +109,7 @@ export const PlayControls = () => {
             setTemporaryTime(newValue.toString());
           }
         } else {
-          // 確保 time 不超過 duration
+          // do not let time exceed duraiton
           newValue = Math.min(newValue, duration);
           setTemporaryTime(newValue.toString());
           setTime(newValue);
