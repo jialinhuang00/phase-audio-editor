@@ -9,17 +9,28 @@ type SegmentProps = {
   track: string;
 };
 
-const generateBars = (width: number, maxHeight: number) => {
+const generateSmoothBars = (width: number, maxHeight: number) => {
   const bars = [];
   let prevHeight = maxHeight / 2;
+  const transitionLength = 20;
 
   for (let x = 0; x < width; x += 2) {
-    // Generate a new height that's somewhat related to the previous height
-    const newHeight = Math.max(
-      1,
-      Math.min(maxHeight, prevHeight + (Math.random() - 0.5) * 8)
-    );
-    bars.push({ x, height: newHeight });
+    let newHeight;
+
+    // 1. first 20px
+    if (x < transitionLength) {
+      newHeight = (x / transitionLength) * prevHeight;
+      // 2. last 20px, smoothly, not abruptly.
+    } else if (x > width - transitionLength) {
+      newHeight = ((width - x) / transitionLength) * prevHeight;
+    } else {
+      newHeight = Math.max(
+        1,
+        Math.min(maxHeight, prevHeight + (Math.random() - 0.5) * 8)
+      );
+    }
+
+    bars.push({ x, height: Math.max(1, Math.round(newHeight)) });
     prevHeight = newHeight;
   }
 
@@ -29,7 +40,7 @@ const generateBars = (width: number, maxHeight: number) => {
 export const Segment = ({ duration, color, track }: SegmentProps) => {
   const { positions, selectTrack } = useSnapshot(audioStore);
   const isSelected = selectTrack === track;
-  const bars = useMemo(() => generateBars(duration, 22), [duration]);
+  const bars = useMemo(() => generateSmoothBars(duration, 22), [duration]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -50,14 +61,9 @@ export const Segment = ({ duration, color, track }: SegmentProps) => {
 
     // Draw position markers
     positions.forEach((left, index) => {
-      const isFiveMultiple = index % 5 === 0;
-      ctx.globalAlpha = isFiveMultiple ? 1 : 0.4;
-      ctx.fillRect(
-        left + (isFiveMultiple ? -1.5 : 0),
-        0,
-        isFiveMultiple ? 3 : 1,
-        24
-      );
+      const isFiveMultiple = index % 5 === 0 && index;
+      ctx.globalAlpha = 1;
+      if (isFiveMultiple) ctx.fillRect(left - 0.25, 0, 0.5, 24);
     });
   }, [bars, color, positions]);
 

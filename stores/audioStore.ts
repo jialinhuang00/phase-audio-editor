@@ -4,7 +4,7 @@ export const audioStore = proxy({
   scrollX: 0,
   scrollY: 0,
   time: 400,
-  duration: 1700,
+  duration: 800,
   selectTrack: "",
   tracks: Array.from({ length: 15 }, (_, index) =>
     String.fromCharCode(65 + index)

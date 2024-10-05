@@ -46,7 +46,7 @@ export const Ruler = () => {
         style={{ width: `${duration}px` }}
       >
         {positions.map((left, index) => {
-          const isFiveMultiple = index % 5 === 0;
+          const isFiveMultiple = index % 5 === 0 && index;
           return !isFiveMultiple ? null : (
             <div
               key={left}
