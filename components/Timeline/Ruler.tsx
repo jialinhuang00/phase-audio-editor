@@ -50,14 +50,14 @@ export const Ruler = () => {
           return !isFiveMultiple ? null : (
             <div
               key={left}
-              className="absolute flex flex-col justify-between text-center ml-[-0.5px] text-[7px] text-[#fafafa] w-[1px]"
+              className="absolute flex flex-col justify-between text-center ml-[-0.5px] text-[7px] h-7 text-[#fafafa] w-[1px]"
               style={{
-                left: `${left}px`,
+                left: `${left + 0.75}px`,
                 width: 30,
               }}
             >
               <p> {left}</p>
-              <p> |</p>
+              <p>|</p>
             </div>
           );
         })}
