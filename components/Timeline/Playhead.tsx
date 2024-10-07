@@ -9,10 +9,13 @@ export const Playhead = () => {
   const { scrollX, duration, time } = useSnapshot(audioStore);
   const lastUpdateRef = useRef(0);
 
-  const updatingPosition = useCallback((newValue: number) => {
-    const clampedTime = Math.min(Math.max(newValue, 0), duration);
-    audioStore.time = clampedTime;
-  }, []);
+  const updatingPosition = useCallback(
+    (newValue: number) => {
+      const clampedTime = Math.min(Math.max(newValue, 0), duration);
+      audioStore.time = clampedTime;
+    },
+    [duration]
+  );
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);

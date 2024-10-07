@@ -195,6 +195,7 @@ export const PlayControls = () => {
       setTemporaryTime(time.toString());
       setTime(time);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
   // arrow keyboard for duration
